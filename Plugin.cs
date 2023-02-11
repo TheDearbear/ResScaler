@@ -3,7 +3,7 @@
 //
 //   1. Add ResScaler.dll to your BepInEx\Plugins
 //   2. Edit config file at BepInEx\config\ResScaler.cfg
-//   5. Enjoy your 144p gaming
+//   3. Enjoy your 144p gaming
 //
 
 //
@@ -32,7 +32,7 @@ public class Plugin : BaseUnityPlugin
         // Validate config
         ValidateConfig();
 
-        // Parse as resolution as int
+        // Parse resolution as int
         int width = int.Parse(Config[WidthEntry].GetSerializedValue());
         int height = int.Parse(Config[HeightEntry].GetSerializedValue());
 
@@ -50,12 +50,12 @@ public class Plugin : BaseUnityPlugin
     private void ValidateConfig()
     {
         if (!Config.ContainsKey(WindowedEntry))
-            Config.Bind(WindowedEntry, false, new ConfigDescription("Set windowed mode for game's window", new AcceptableValueList<bool>(false, true)));
+            Config.Bind(WindowedEntry, false, new ConfigDescription("Set windowed mode for game window", new AcceptableValueList<bool>(false, true)));
 
         if (!Config.ContainsKey(WidthEntry))
-            Config.Bind(WidthEntry, Display.main.systemWidth, new ConfigDescription("Set game window's width", new AcceptableValueRange<int>(1, Display.main.systemWidth)));
+            Config.Bind(WidthEntry, Display.main.systemWidth, new ConfigDescription("Set game window width", new AcceptableValueRange<int>(1, Display.main.systemWidth)));
 
         if (!Config.ContainsKey(HeightEntry))
-            Config.Bind(HeightEntry, Display.main.systemHeight, new ConfigDescription("Set game window's height", new AcceptableValueRange<int>(1, Display.main.systemHeight)));
+            Config.Bind(HeightEntry, Display.main.systemHeight, new ConfigDescription("Set game window height", new AcceptableValueRange<int>(1, Display.main.systemHeight)));
     }
 }
