@@ -13,4 +13,5 @@
 Windowed = true
 Width = 256
 Height = 144
+UpdateMode = 0
 ```
