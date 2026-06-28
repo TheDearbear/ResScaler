@@ -1,4 +1,3 @@
-using System;
 using ResScaler;
 using UnityEngine;
 

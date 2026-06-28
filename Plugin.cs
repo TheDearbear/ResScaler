@@ -12,11 +12,14 @@
 // Windowed = false
 // Width = 1920
 // Height = 1080
+// UpdateMode = 0
 //
 
 using BepInEx;
 using BepInEx.Configuration;
+
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace ResScaler;
 
@@ -43,28 +46,29 @@ public class Plugin : BaseUnityPlugin
         // Parse windowed flag as bool
         bool windowed = bool.Parse(Config[WindowedEntry].GetSerializedValue());
 
-        int updateMode = int.Parse(base.Config[this.UpdateModeEntry].GetSerializedValue());
+        int updateMode = int.Parse(Config[UpdateModeEntry].GetSerializedValue());
 
         // Update resolution and fullscreen mode
-        Plugin.Resolution.x = width;
-	    Plugin.Resolution.y = height;
-		Plugin.FullScreen = !windowed;
+        Resolution.x = width;
+	    Resolution.y = height;
+		FullScreen = !windowed;
+
 		if (updateMode == 0 || updateMode == 3 || updateMode == 4 || updateMode == 5)
 		{
-			Screen.SetResolution(width, height, Plugin.FullScreen);
+			Screen.SetResolution(width, height, FullScreen);
 		}
 		if (updateMode == 1 || updateMode == 3 || updateMode == 5)
 		{
 			SceneManager.sceneLoaded += delegate(Scene s, LoadSceneMode m)
 			{
-				Screen.SetResolution(width, height, Plugin.FullScreen);
+				Screen.SetResolution(width, height, FullScreen);
 			};
 		}
 		if (updateMode == 2 || updateMode == 4 || updateMode == 5)
 		{
 			SceneManager.sceneLoaded += delegate(Scene s, LoadSceneMode m)
 			{
-				this.CreateUpdater();
+				CreateUpdater();
 			};
 		}
 
@@ -81,19 +85,39 @@ public class Plugin : BaseUnityPlugin
     private void ValidateConfig()
     {
         if (!Config.ContainsKey(WindowedEntry))
-            Config.Bind(WindowedEntry, false, new ConfigDescription("Set windowed mode for game window", new AcceptableValueList<bool>(false, true)));
+        {
+            Config.Bind(WindowedEntry, false,
+                new ConfigDescription("Set windowed mode for game window",
+                    new AcceptableValueList<bool>(false, true)
+                )
+            );
+        }
 
         if (!Config.ContainsKey(WidthEntry))
-            Config.Bind(WidthEntry, Display.main.systemWidth, new ConfigDescription("Set game window width", new AcceptableValueRange<int>(1, Display.main.systemWidth)));
+        {
+            Config.Bind(WidthEntry, Display.main.systemWidth,
+                new ConfigDescription("Set game window width",
+                    new AcceptableValueRange<int>(1, Display.main.systemWidth)
+                )
+            );
+        }
 
         if (!Config.ContainsKey(HeightEntry))
-            Config.Bind(HeightEntry, Display.main.systemHeight, new ConfigDescription("Set game window height", new AcceptableValueRange<int>(1, Display.main.systemHeight)));
+        {
+            Config.Bind(HeightEntry, Display.main.systemHeight,
+                new ConfigDescription("Set game window height",
+                    new AcceptableValueRange<int>(1, Display.main.systemHeight)
+                )
+            );
+        }
 
-        if (!Config.ContainsKey(this.UpdateModeEntry))
+        if (!Config.ContainsKey(UpdateModeEntry))
 		{
-			Config.Bind<int>(this.UpdateModeEntry, 0, 
-            new ConfigDescription("When change the resolution\n0 - only when the plugin is loaded\n1 - only when a scene is loaded\n2 - every frame\n3 - options 0 and 1\n4 - options 0 and 2\n5 - all options", 
-            new AcceptableValueRange<int>(0, 5), Array.Empty<object>()));
+			Config.Bind(UpdateModeEntry, 0, 
+                new ConfigDescription("When change the resolution\n0 - only when the plugin is loaded\n1 - only when a scene is loaded\n2 - every frame\n3 - options 0 and 1\n4 - options 0 and 2\n5 - all options",
+                    new AcceptableValueRange<int>(0, 5)
+                )
+            );
 		}
     }
 }
